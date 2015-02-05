@@ -1,3 +1,14 @@
+<<<<<<< HEAD
+Test_Data/
+.idea/
+*.avi
+*.bmp
+*.png
+*.pdf
+*.txt
+
+=======
+>>>>>>> parent of 130d626... Upload Current Code
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
