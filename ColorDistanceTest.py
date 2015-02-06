@@ -87,6 +87,7 @@ class CDT():
 
     def setArea(self, circle=None, mask=None):
 
+        # If statements for when arguments are passed into the program
         if mask is not None and circle is not None:
             self.circle = circle
             self.mask = mask
@@ -131,6 +132,7 @@ class CDT():
             self.initCam()
             return
 
+        # Code for manual input of area
         disp = Display()
 
         clr1 = Color.RED
@@ -141,24 +143,35 @@ class CDT():
         center = None
         radius = None
 
+        # Main display loop for choosing area
         while disp.isNotDone():
             img = self.cam.getImage()
+
+            # If feed is from video, reinitialise video if it has ended
             if img.isEmpty():
                 self.initCam()
                 img = self.cam.getImage()
+
+            # End area selection
             if disp.mouseRight:
                 break
+
+            # Anchor point for midpoint of circle
             if disp.leftButtonDownPosition():
                 down = None
                 up = None
                 down = disp.leftButtonDownPosition()
             if disp.leftButtonUpPosition():
                 up = disp.leftButtonUpPosition()
+
+            # Draws what the current area is when mouse button is held down for live feedback
             if down is not None and up is None:
                 img.drawLine([disp.mouseX, disp.mouseY], down, clr1, 2)
                 radius = math.sqrt(math.pow(down[0] - disp.mouseX, 2) + math.pow(down[1] - disp.mouseY, 2))
                 if math.fabs(down[0] - disp.mouseX) > 50 or math.fabs(down[1] - disp.mouseY) > 50:
                     img.drawCircle(down, radius, clr1, 2)
+
+            # Show currently selected area
             if up is not None and down is not None:
                 center = down
                 radius = math.sqrt(math.pow(down[0] - up[0], 2) + math.pow(down[1] - up[1], 2))
@@ -171,12 +184,14 @@ class CDT():
                     self.circle = Circle(0, center[0], center[1], radius)
             img.save(disp)
 
+        # Calculating min and max blob size according to the new size of computation window
         croppedDimensions = math.fabs(bottomright[0] - topleft[0]) ** 2
         self.max_blob_size = croppedDimensions * self.max_blob_multiplier
         self.min_blob_size = croppedDimensions * self.min_blob_multiplier
 
         crpImg = Image(img.size()).crop(self.circle)
 
+        # Creation of mask for main program loop
         self.mask = Image(crpImg.size())
         dl = DrawingLayer(img.size())
         dl.circle((crpImg.size()[0] / 2, crpImg.size()[1] / 2), crpImg.size()[0] / 2, filled=True, color=Color.WHITE)
@@ -326,22 +341,38 @@ class CDT():
         width = img1.width
         height = img1.height
 
+        # Inclusion of original feed from camera/video
         if originalImage:
             allImg = Image((width * 3, height))
         else:
             allImg = Image((width * 2, height))
 
+        # Catch in case something goes wrong with camera initialisation
         i = self.cam.getImage()
         if i.isEmpty():
             print "End Of File, reinitialize or choose new file"
             return None
 
+        # Main vision processing
         im = i.crop(self.circle)
+
+        # Application of mask to reduce computation area
         img = (im - self.mask) + self.mask
+
+        # Finding the color distance from masked image
         dist = img.colorDistance(self.color).invert()
+
+        # Four operations:
+        # Segmentation of the color distance image
+        # Image morphology using morphOpen (erode then dilate)
+        # Binarization of morphed image
+        # Inversion of binary image for processing
         seg = dist.stretch(self.seglow, self.seghigh).morphOpen().binarize(50).invert()
+
+        # Detection of blobs in processed image
         blobs = seg.findBlobs(minsize=self.min_blob_size, maxsize=self.max_blob_size)
 
+        # Creating a Drawing Layer to append and draw data into one image
         if originalImage:
             ddl = DrawingLayer((width * 3, height))
             ddl.blit(img, (0, 0))
@@ -353,37 +384,55 @@ class CDT():
             ddl.blit(dist, (0, 0))
             ddl.blit(seg, (width, 0))
 
+        # Main tracking loop for blobs detected
         if track:
+
+            # Sends the detected blobs to the NaiveTrackingClass.py for processing
+            # Refer to said class for more information
             data = self.tracking.track(blobs)
 
+            # key goes through 1 and 2, as identification of flies
             for key in range(1, 3):
 
                 pos1, pos2 = data[key]
                 prevpos1, prevpos2 = self.flyprevori[key]
 
+                # If no data is returned from tracking, nothing can be drawn
                 if pos1 is None:
                     continue
 
+                # Draws a line from the data returned from tracking
+                # This will be the orientation of said fly
                 elif prevpos2 is not None and pos2 is not None:
                     ddl.line(pos1, pos2, Color.RED, 1, False, -1)
                     self.flyprevori[key] = (pos1, pos2)
 
+                # Currently this code is redundant, as the NaiveTrackingClass.py takes care of this situation
                 elif prevpos2 is not None and pos2 is None:
                     prevori = prevpos2 - prevpos1
                     ddl.line(pos1, pos1 + prevori, Color.ORANGE, 1, False, -1)
                     self.flyprevori[key] = (pos1, pos1 + prevori)
 
+                # Catch if for first run, as there will be no previous data, but contains new data
                 elif prevpos2 is None and pos2 is not None:
                     ddl.line(pos1, pos2, Color.RED, 1, False, -1)
                     self.flyprevori[key] = (pos1, pos2)
 
+                # Sets previous position to new position for next call of function
                 self.flyprevpos[key] = pos1
 
+        # Displays Color used for Color Distancing
         ddl.text(str(self.color), [10, 10], self.color, -1)
+
+        # Displays values used for segmentation
         ddl.text('[' + str(self.seglow) + ',' + str(self.seghigh) + ']', [10, 30], self.color, -1)
+
+        # Drawing all of previous data onto a single image allImg
         allImg.addDrawingLayer(ddl)
         allImg = allImg.applyLayers()
         allBlobs = []
+
+        # Drawing of blobs on all images in allImg, rather than in live image
         if blobs:
             for blob in blobs:
                 x, y = blob.coordinates()

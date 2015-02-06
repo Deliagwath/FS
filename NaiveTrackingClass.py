@@ -210,6 +210,7 @@ class NaiveTrackingClass:
             if not init2:
                 magnitude2, orientation2 = self.withinRange(2, pos)
 
+            # If smoothingmethod is Weighted Moving Average ("WMA")
             if self.smoothingmethod == "WMA":
                 if first:
                     self.addOrientation(orientation1, orientation2)

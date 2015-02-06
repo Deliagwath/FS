@@ -44,6 +44,7 @@ class initGUI(Frame):
         self.parent = parent
         self.initUI()
 
+    # Populates GUI
     def initUI(self):
         self.parent.title("Launch Settings")
 
@@ -111,6 +112,7 @@ class initGUI(Frame):
         self.quitbutton = tK.Button(self, text="Quit", command=self.savelastsession)
         self.quitbutton.grid(row=6, column=1)
 
+    # Parses all the data from the GUI elements and passes it into SequentialFBFMD which is the main program loop
     def run(self):
         self.ld = self.tkld.get()
         print "Larger Display: " + str(self.ld)
@@ -129,6 +131,7 @@ class initGUI(Frame):
         print "Load File? " + str(self.lf)
         self.main_program = sF.SequentialFBFMD(True, self.ld, self.cn, self.live, self.src, self.trk, self.savefile, self.lf)
 
+    # Automatically called when the Quit button is pressed
     def savelastsession(self):
 
         filename = "lastSession"
