@@ -60,7 +60,7 @@ class NaiveTrackingClass:
             deltay = pos[1] - self.fly2past[-1][1]
 
         else:
-            print "Incorrect Arguments: Line 63 NaiveTrackingClass.py"
+            print "Incorrect Arguments NaiveTrackingClass.py withinRange(" + str(flyno) + ", " + str(pos) + ")"
             return False, None
 
         # Calculating magnitude of difference between two points to attempt to retain identity
@@ -71,6 +71,71 @@ class NaiveTrackingClass:
             return magnitude, orientation
         else:
             return False, None
+
+    def bulkTrack(self, blobs):
+
+        returndict = {}
+
+        init1 = False
+        init2 = False
+
+        for pos in blobs.coordinates():
+
+            if self.fly1past[-1] is None:
+                returndict[1] = (pos, None)
+                init1 = True
+                continue
+
+            if self.fly2past[-1] is None:
+                returndict[2] = (pos, None)
+                init2 = True
+                continue
+
+            if init1 and init2:
+                break
+
+            # Checks if the new co-ordinates are within range of the new co-ordinate
+            if not init1:
+                boolean1 = self.withinMin(1, pos)
+
+            if not init2:
+                boolean2 = self.withinMin(2, pos)
+
+            if not init1 and boolean1:
+                returndict[1] = (pos, boolean1)
+
+            elif not init2 and boolean2:
+                returndict[2] = (pos, boolean2)
+
+        if 1 not in returndict:
+            returndict[1] = (None, None)
+        if 2 not in returndict:
+            returndict[2] = (None, None)
+
+        return returndict
+
+    # Modification to withinRange which only checks if the fly is stationary or not
+    def withinMin(self, flyno, pos):
+        # Retrieving past data for calculation
+        if flyno == 1:
+            deltax = pos[0] - self.fly1past[-1][0]
+            deltay = pos[1] - self.fly1past[-1][1]
+
+        elif flyno == 2:
+            deltax = pos[0] - self.fly2past[-1][0]
+            deltay = pos[1] - self.fly2past[-1][1]
+
+        else:
+            print "Incorrect Arguments: NaiveTrackingClass.py withinMin(" + str(flyno) + ", " + str(pos) + ")"
+            return False, None
+
+        # Calculating magnitude of difference between two points to attempt to retain identity
+        magnitude = sqrt((deltax ** 2) + (deltay ** 2))
+
+        if 0 <= magnitude <= self.minrange:
+            return True
+        else:
+            return False
 
     def setRange(self, minrange=None, maxrange=None):
         if minrange is None and maxrange is None:
@@ -174,6 +239,19 @@ class NaiveTrackingClass:
 
         return ori1, ori2
 
+    # Checks whether or not the program is tracking both pointers to the same blob rather than two blobs
+    # This case occurs when the two flies meet and forms one blob, causing the program to move both trackers to that
+    # one blob.
+    def checkIncorrectTracking(self):
+
+        # Checks if x co-ords are the same and y co-ords are the same
+        if self.fly1past[-1] is not None and self.fly2past[-1] is not None and \
+            self.fly1past[-1][0] == self.fly2past[-1][0] and \
+                self.fly1past[-1][1] == self.fly2past[-1][1]:
+            return True
+        else:
+            return False
+
     # Returns a dictionary with the fly id as the key, and two co-ordinates ((x,y), (x2,y2)) as values.
     def track(self, blobs):
 
@@ -185,6 +263,10 @@ class NaiveTrackingClass:
         init2 = False
 
         first = True
+
+        # For the case in which both the trackers are tracking the same object, reinitialise the class
+        if self.checkIncorrectTracking():
+            self.__init__(self.smoothingmethod, self.size)
 
         for pos in blobs.coordinates():
 

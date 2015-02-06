@@ -391,35 +391,65 @@ class CDT():
             # Refer to said class for more information
             data = self.tracking.track(blobs)
 
-            # key goes through 1 and 2, as identification of flies
+            print "Data"
+            print "Data1:" + str(data[1])
+            print "Data2:" + str(data[2])
+            print "-----"
+
+            # Flags to reduce computation if both values were not found
+            notfound = {1: False, 2: False}
+
+            # If no data is returned from tracking, attempt to draw previous orientation on new position
             for key in range(1, 3):
 
-                pos1, pos2 = data[key]
-                prevpos1, prevpos2 = self.flyprevori[key]
+                if data[key][0] is None and data[key][1] is None:
+                    bulkdata = self.tracking.bulkTrack(blobs)
 
-                # If no data is returned from tracking, nothing can be drawn
-                if pos1 is None:
-                    continue
+                    pos, boolean = bulkdata[key]
+                    prevpos1, prevpos2 = self.flyprevori[key]
 
-                # Draws a line from the data returned from tracking
-                # This will be the orientation of said fly
-                elif prevpos2 is not None and pos2 is not None:
-                    ddl.line(pos1, pos2, Color.RED, 1, False, -1)
-                    self.flyprevori[key] = (pos1, pos2)
+                    if pos is None:
+                        continue
 
-                # Currently this code is redundant, as the NaiveTrackingClass.py takes care of this situation
-                elif prevpos2 is not None and pos2 is None:
-                    prevori = prevpos2 - prevpos1
-                    ddl.line(pos1, pos1 + prevori, Color.ORANGE, 1, False, -1)
-                    self.flyprevori[key] = (pos1, pos1 + prevori)
+                    elif prevpos2 is not None and boolean:
+                        prevori = prevpos2 - prevpos1
+                        ddl.line(pos, pos + prevori, Color.ORANGE, 1, False, -1)
+                        self.flyprevori[key] = (pos, pos + prevori)
+                        notfound[key] = True
 
-                # Catch if for first run, as there will be no previous data, but contains new data
-                elif prevpos2 is None and pos2 is not None:
-                    ddl.line(pos1, pos2, Color.RED, 1, False, -1)
-                    self.flyprevori[key] = (pos1, pos2)
+                    else:
+                        continue
 
-                # Sets previous position to new position for next call of function
-                self.flyprevpos[key] = pos1
+            else:
+
+                if notfound[1] and notfound[2]:
+                    pass
+
+                else:
+
+                    # key goes through 1 and 2, as identification of flies
+                    for key in range(1, 3):
+
+                        pos1, pos2 = data[key]
+                        prevpos1, prevpos2 = self.flyprevori[key]
+
+                        # If no data is returned from tracking, nothing can be drawn
+                        if pos1 is None:
+                            continue
+
+                        # Draws a line from the data returned from tracking
+                        # This will be the orientation of said fly
+                        elif prevpos2 is not None and pos2 is not None:
+                            ddl.line(pos1, pos2, Color.RED, 1, False, -1)
+                            self.flyprevori[key] = (pos1, pos2)
+
+                        # Catch if for first run, as there will be no previous data, but contains new data
+                        elif prevpos2 is None and pos2 is not None:
+                            ddl.line(pos1, pos2, Color.RED, 1, False, -1)
+                            self.flyprevori[key] = (pos1, pos2)
+
+                        # Sets previous position to new position for next call of function
+                        self.flyprevpos[key] = pos1
 
         # Displays Color used for Color Distancing
         ddl.text(str(self.color), [10, 10], self.color, -1)
