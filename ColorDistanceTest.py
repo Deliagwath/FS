@@ -4,7 +4,7 @@ import NaiveTrackingClass
 import os
 
 # Author Pira Limpiti
-# Questions or bugs email either
+# Questions or bugs, email either
 # PPL3000@Gmail.com or
 # s1124124@sms.ed.ac.uk
 
