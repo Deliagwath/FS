@@ -73,10 +73,6 @@ class CDT():
     flyprevpos = {1: None, 2: None}
     flyprevori = {1: (None, None), 2: (None, None)}
 
-    # DEBUG Variables
-    tolerance = 0.05
-    DEBUG = True
-
     def __init__(self, live, camno, video):
         self.live = live
         self.camno = camno
@@ -166,7 +162,6 @@ class CDT():
             if up is not None and down is not None:
                 center = down
                 radius = math.sqrt(math.pow(down[0] - up[0], 2) + math.pow(down[1] - up[1], 2))
-                # # print "Center: " + str(down) + "\tRadius: " + str(radius)
                 topleft = [down[0] - radius, down[1] - radius]
                 bottomright = [down[0] + radius, down[1] + radius]
                 bb = disp.pointsToBoundingBox(topleft, bottomright)
@@ -365,11 +360,6 @@ class CDT():
 
                 pos1, pos2 = data[key]
                 prevpos1, prevpos2 = self.flyprevori[key]
-
-                print "DATA"
-                print str(pos1) + "|" + str(pos2)
-                print "PREVDATA"
-                print str(prevpos1) + "|" + str(prevpos2)
 
                 if pos1 is None:
                     continue

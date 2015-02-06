@@ -188,12 +188,6 @@ class NaiveTrackingClass:
 
         for pos in blobs.coordinates():
 
-            print "NTC"
-            print str(self.fly1past)
-            print str(self.fly2past)
-            print str(self.fly1pastori)
-            print str(self.fly2pastori)
-
             if self.fly1past[-1] is None:
                 self.addPosition(pos1=pos)
                 returndict[1] = (pos, None)
