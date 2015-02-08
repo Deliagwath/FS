@@ -106,9 +106,13 @@ class SequentialFBFMD():
             if continuous:
                 img = self.cdt.next_frame(self.ld, self.track)
 
-            if disp.mouseMiddle:
-                print "MMB"
-                continuous = not continuous
+            if disp.mouseWheelUp:
+                print "MMBU"
+                continuous = True
+
+            if disp.mouseWheelDown:
+                print "MMBD"
+                continuous = False
 
             if disp.mouseLeft:
                 print "LMB"
