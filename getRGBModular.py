@@ -1,13 +1,15 @@
 from SimpleCV import *
-import ColorDistanceTest
 
 # Fly Eyes ~(100,50,50)
 # Fly Body ~(100,100,100)
-# Original intention was to detect the Drosophilia's eyes and bodies as two segments and use to get accurate orientation
-# However, RED as a segmentation colour does not work when the Drosophilia is upside down and cannot be detected as
+# Original intention was to detect the Drosophilia's eyes and bodies
+# as two segments and use to get accurate orientation
+# However, RED as a segmentation colour does not work when the
+# Drosophilia is upside down and cannot be detected as
 # clearly in certain circumstances
 
-class getRGBModular():
+
+class GetRGBModular():
 
     # Variables for instance
     cam = None          # SimpleCV Camera() Object
@@ -19,8 +21,8 @@ class getRGBModular():
         self.extended = extended
         self.cdt = cdt
 
-    def setColor(self):
-        img = self.cdt.nextColorTestFrame(self.extended, False)
+    def set_color(self):
+        img = self.cdt.next_frame(self.extended, False)
 
         boolean = False
 
@@ -28,36 +30,40 @@ class getRGBModular():
         while disp.isNotDone():
 
             # Advances one frame via left click
-            # Second argument set to false, tracking not necessary to select colour
-            # If tracking is on, it can be detrimental as a line is drawn and may interfere with colour selection
+            # Second argument set to false,
+            # tracking not necessary to select colour
+            # If tracking is on, it can be detrimental as a line
+            # is drawn and may interfere with colour selection
             if disp.mouseLeft:
-                img = self.cdt.nextColorTestFrame(self.extended, False)
+                img = self.cdt.next_frame(self.extended, False)
 
             # Restarts the feed if arrived at end of file
             if img.isEmpty():
                 print "EOF, restarting feed"
-                self.cdt.initCam()
-                img = self.cdt.nextColorTestFrame(self.extended, False)
-                break
+                self.cdt.init_cam()
+                img = self.cdt.next_frame(self.extended, False)
 
-            # Gets colour from pixel currently at mouse position and set segmentation colour
+            # Gets colour from pixel currently at mouse position
+            # and set segmentation colour
             if disp.mouseRight:
                 x = disp.mouseX
                 y = disp.mouseY
-                pixel = img.getPixel(x,y)
+                pixel = img.getPixel(x, y)
                 r, g, b = pixel
                 print str(pixel)
                 print str(r) + "," + str(g) + "," + str(b)
                 boolean = True
-                self.cdt.setColor([int(r), int(g), int(b)])
+                self.cdt.set_color([int(r), int(g), int(b)])
 
-            # Ends the colour selection process and returns to CDT's next function
+            # Ends the colour selection process and
+            # returns to CDT's next function
             if disp.mouseMiddle:
                 print "MMB Break"
                 break
 
             if boolean:
-                img.drawText("RGB: " + str(r) + "," + str(g) + "," + str(b), x+20, y+20, [int(r), int(g), int(b)], 16)
+                img.drawText("RGB: " + str(r) + "," + str(g) + "," +
+                             str(b), x+20, y+20, [int(r), int(g), int(b)], 16)
             img.save(disp)
         disp.quit()
 

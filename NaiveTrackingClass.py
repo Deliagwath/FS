@@ -1,5 +1,6 @@
 from math import sqrt
 
+
 class NaiveTrackingClass:
 
     smoothingmethod = None
@@ -22,12 +23,12 @@ class NaiveTrackingClass:
             self.size = size
             self.fly1pastori = []
             self.fly2pastori = []
-            self.initWeights()
-            self.initArrays()
+            self.init_weights()
+            self.init_arrays()
         else:
             self.size = 1
 
-    def initArrays(self):
+    def init_arrays(self):
 
         for i in range(0, self.size):
             self.fly1past.append(None)
@@ -37,7 +38,7 @@ class NaiveTrackingClass:
             self.fly1pastori.append(None)
             self.fly2pastori.append(None)
 
-    def initWeights(self):
+    def init_weights(self):
 
         total = 0
 
@@ -48,7 +49,7 @@ class NaiveTrackingClass:
         for i in range(1, self.size + 1):
             self.weights.append(i / float(total))
 
-    def withinRange(self, flyno, pos):
+    def within_range(self, flyno, pos):
 
         # Retrieving past data for calculation
         if flyno == 1:
@@ -60,19 +61,22 @@ class NaiveTrackingClass:
             deltay = pos[1] - self.fly2past[-1][1]
 
         else:
-            print "Incorrect Arguments NaiveTrackingClass.py withinRange(" + str(flyno) + ", " + str(pos) + ")"
+            print "Incorrect Arguments NaiveTrackingClass.py \
+            withinRange(" + str(flyno) + ", " + str(pos) + ")"
             return False, None
 
-        # Calculating magnitude of difference between two points to attempt to retain identity
+        # Calculating magnitude of difference
+        # between two points to attempt to retain identity
         magnitude = sqrt((deltax ** 2) + (deltay ** 2))
 
         if self.minrange < magnitude < self.maxrange:
-            orientation = [(deltax / magnitude) * 1000, (deltay / magnitude) * 1000]
+            orientation = [(deltax / magnitude) * 1000,
+                           (deltay / magnitude) * 1000]
             return magnitude, orientation
         else:
             return False, None
 
-    def bulkTrack(self, blobs):
+    def bulk_track(self, blobs):
 
         returndict = {}
 
@@ -94,12 +98,13 @@ class NaiveTrackingClass:
             if init1 and init2:
                 break
 
-            # Checks if the new co-ordinates are within range of the new co-ordinate
+            # Checks if the new co-ordinates are within
+            # range of the new co-ordinate
             if not init1:
-                boolean1 = self.withinMin(1, pos)
+                boolean1 = self.within_min(1, pos)
 
             if not init2:
-                boolean2 = self.withinMin(2, pos)
+                boolean2 = self.within_min(2, pos)
 
             if not init1 and boolean1:
                 returndict[1] = (pos, boolean1)
@@ -114,8 +119,10 @@ class NaiveTrackingClass:
 
         return returndict
 
-    # Modification to withinRange which only checks if the fly is stationary or not
-    def withinMin(self, flyno, pos):
+    # Modification to withinRange which only checks
+    # if the fly is stationary or not
+
+    def within_min(self, flyno, pos):
         # Retrieving past data for calculation
         if flyno == 1:
             deltax = pos[0] - self.fly1past[-1][0]
@@ -126,10 +133,12 @@ class NaiveTrackingClass:
             deltay = pos[1] - self.fly2past[-1][1]
 
         else:
-            print "Incorrect Arguments: NaiveTrackingClass.py withinMin(" + str(flyno) + ", " + str(pos) + ")"
+            print "Incorrect Arguments: NaiveTrackingClass.py \
+                withinMin(" + str(flyno) + ", " + str(pos) + ")"
             return False, None
 
-        # Calculating magnitude of difference between two points to attempt to retain identity
+        # Calculating magnitude of difference between
+        # two points to attempt to retain identity
         magnitude = sqrt((deltax ** 2) + (deltay ** 2))
 
         if 0 <= magnitude <= self.minrange:
@@ -137,7 +146,7 @@ class NaiveTrackingClass:
         else:
             return False
 
-    def setRange(self, minrange=None, maxrange=None):
+    def set_range(self, minrange=None, maxrange=None):
         if minrange is None and maxrange is None:
             self.minrange = 1
             self.maxrange = 30
@@ -146,7 +155,7 @@ class NaiveTrackingClass:
         if maxrange is not None:
             self.maxrange = maxrange
 
-    def addPosition(self, pos1=None, pos2=None):
+    def add_position(self, pos1=None, pos2=None):
 
         # Populating array [Fly #1]
         if len(self.fly1past) == self.size and pos1 is not None:
@@ -170,7 +179,7 @@ class NaiveTrackingClass:
         else:
             pass
 
-    def replacePosition(self, pos1=None, pos2=None):
+    def replace_position(self, pos1=None, pos2=None):
 
         if pos1 is not None:
             self.fly1past[-1] = pos1
@@ -178,7 +187,7 @@ class NaiveTrackingClass:
         if pos2 is not None:
             self.fly2past[-1] = pos2
 
-    def addOrientation(self, ori1=None, ori2=None):
+    def add_orientation(self, ori1=None, ori2=None):
 
         # Populating array [Fly #1 Orientation]
         if len(self.fly1pastori) == (self.size - 1) and ori1 is not None:
@@ -202,7 +211,7 @@ class NaiveTrackingClass:
         else:
             pass
 
-    def replaceOrientation(self, ori1=None, ori2=None):
+    def replace_orientation(self, ori1=None, ori2=None):
 
         if ori1 is not None:
             self.fly1pastori[-1] = ori1
@@ -211,8 +220,9 @@ class NaiveTrackingClass:
             self.fly2pastori[-1] = ori2
 
     # Used for WMA (Weighted Moving Average) calculation
-    # Takes previous orientations to calculate an average of where the orientation should be
-    def calculateOrientation(self):
+    # Takes previous orientations to calculate
+    # an average of where the orientation should be
+    def calculate_orientation(self):
 
         sum1 = [0, 0]
         sum2 = [0, 0]
@@ -239,20 +249,22 @@ class NaiveTrackingClass:
 
         return ori1, ori2
 
-    # Checks whether or not the program is tracking both pointers to the same blob rather than two blobs
-    # This case occurs when the two flies meet and forms one blob, causing the program to move both trackers to that
-    # one blob.
-    def checkIncorrectTracking(self):
+    # Checks whether or not the program is tracking
+    # both pointers to the same blob rather than two blobs
+    # This case occurs when the two flies meet and forms one blob,
+    # causing the program to move both trackers to that one blob.
+    def check_incorrect_tracking(self):
 
         # Checks if x co-ords are the same and y co-ords are the same
-        if self.fly1past[-1] is not None and self.fly2past[-1] is not None and \
-            self.fly1past[-1][0] == self.fly2past[-1][0] and \
-                self.fly1past[-1][1] == self.fly2past[-1][1]:
+        if self.fly1past[-1] is not None and self.fly2past[-1] is not None \
+                and self.fly1past[-1][0] == self.fly2past[-1][0] \
+                and self.fly1past[-1][1] == self.fly2past[-1][1]:
             return True
         else:
             return False
 
-    # Returns a dictionary with the fly id as the key, and two co-ordinates ((x,y), (x2,y2)) as values.
+    # Returns a dictionary with the fly id as the key,
+    # and two co-ordinates ((x,y), (x2,y2)) as values.
     def track(self, blobs):
 
         returndict = {}
@@ -264,8 +276,9 @@ class NaiveTrackingClass:
 
         first = True
 
-        # For the case in which both the trackers are tracking the same object, reinitialise the class
-        if self.checkIncorrectTracking():
+        # For the case in which both the trackers
+        # are tracking the same object, reinitialise the class
+        if self.check_incorrect_tracking():
             self.__init__(self.smoothingmethod, self.size)
 
         if blobs is None:
@@ -274,13 +287,13 @@ class NaiveTrackingClass:
         for pos in blobs.coordinates():
 
             if self.fly1past[-1] is None:
-                self.addPosition(pos1=pos)
+                self.add_position(pos1=pos)
                 returndict[1] = (pos, None)
                 init1 = True
                 continue
 
             if self.fly2past[-1] is None:
-                self.addPosition(pos2=pos)
+                self.add_position(pos2=pos)
                 returndict[2] = (pos, None)
                 init2 = True
                 continue
@@ -288,59 +301,69 @@ class NaiveTrackingClass:
             if init1 and init2:
                 break
 
-            # Checks if the new co-ordinates are within range of the new co-ordinate
+            # Checks if the new co-ordinates are
+            # within range of the new co-ordinate
             if not init1:
-                magnitude1, orientation1 = self.withinRange(1, pos)
+                magnitude1, orientation1 = self.within_range(1, pos)
 
             if not init2:
-                magnitude2, orientation2 = self.withinRange(2, pos)
+                magnitude2, orientation2 = self.within_range(2, pos)
 
             # If smoothingmethod is Weighted Moving Average ("WMA")
             if self.smoothingmethod == "WMA":
                 if first:
-                    self.addOrientation(orientation1, orientation2)
+                    self.add_orientation(orientation1, orientation2)
                     first = False
                 else:
-                    self.replaceOrientation(orientation1, orientation2)
+                    self.replace_orientation(orientation1, orientation2)
 
-                self.calculateOrientation()
-                ori1, ori2 = self.calculateOrientation()
+                self.calculate_orientation()
+                ori1, ori2 = self.calculate_orientation()
 
                 if not init1 and magnitude1 and 1 not in returndict:
                     returndict[1] = (pos, (pos[0] + ori1[0], pos[1] + ori1[1]))
                     mag1 = magnitude1
-                    self.addPosition(pos1=pos)
+                    self.add_position(pos1=pos)
 
-                elif not init1 and magnitude1 and 1 in returndict and magnitude1 < mag1:
+                elif not init1 and magnitude1 and \
+                        1 in returndict and magnitude1 < mag1:
                     returndict[1] = (pos, (pos[0] + ori1[0], pos[1] + ori1[1]))
                     mag1 = magnitude1
-                    self.replacePosition(pos1=pos)
+                    self.replace_position(pos1=pos)
 
                 elif not init2 and magnitude2 and 2 not in returndict:
                     returndict[2] = (pos, (pos[0] + ori2[0], pos[1] + ori2[1]))
                     mag2 = magnitude2
-                    self.addPosition(pos2=pos)
+                    self.add_position(pos2=pos)
 
-                elif not init2 and magnitude2 and 2 in returndict and magnitude2 < mag2:
+                elif not init2 and magnitude2 and \
+                        2 in returndict and magnitude2 < mag2:
                     returndict[2] = (pos, (pos[0] + ori2[0], pos[1] + ori2[1]))
                     mag2 = magnitude2
-                    self.replacePosition(pos2=pos)
+                    self.replace_position(pos2=pos)
 
             else:
                 if not init1 and magnitude1 and 1 not in returndict:
-                    returndict[1] = (pos, (pos[0] + orientation1[0], pos[1] + orientation1[1]))
+                    returndict[1] = (pos, (pos[0] + orientation1[0],
+                                           pos[1] + orientation1[1]))
                     mag1 = magnitude1
 
-                elif not init1 and magnitude1 and 1 in returndict and magnitude1 < mag1:
-                    returndict[1] = (pos, (pos[0] + orientation1[0], pos[1] + orientation1[1]))
+                elif not init1 and magnitude1 and \
+                        1 in returndict and magnitude1 < mag1:
+                    returndict[1] = (pos, (pos[0] + orientation1[0],
+                                           pos[1] + orientation1[1]))
                     mag1 = magnitude1
 
-                elif not init2 and magnitude2 and 2 not in returndict:
-                    returndict[2] = (pos, (pos[0] + orientation2[0], pos[1] + orientation2[1]))
+                elif not init2 and magnitude2 and \
+                        2 not in returndict:
+                    returndict[2] = (pos, (pos[0] + orientation2[0],
+                                           pos[1] + orientation2[1]))
                     mag2 = magnitude2
 
-                elif not init2 and magnitude2 and 2 in returndict and magnitude2 < mag2:
-                    returndict[2] = (pos, (pos[0] + orientation2[0], pos[1] + orientation2[1]))
+                elif not init2 and magnitude2 and \
+                        2 in returndict and magnitude2 < mag2:
+                    returndict[2] = (pos, (pos[0] + orientation2[0],
+                                           pos[1] + orientation2[1]))
                     mag2 = magnitude2
 
         if 1 not in returndict:

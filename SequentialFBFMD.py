@@ -1,11 +1,13 @@
 from SimpleCV import *
 import ColorDistanceTest
-import getRGBModular
+import GetRGBModular
 import sys
 
 # Main class program to be run
-# This class can either be run from command line with respective variables
-# Or run from initGUI.py and recieve arguments from said instance
+# This class can either be run from command line
+# with respective variables or run from initGUI.py
+# and recieve arguments from said instance
+
 
 class SequentialFBFMD():
 
@@ -20,11 +22,14 @@ class SequentialFBFMD():
     cdt = None      # ColorDistanceTest (CDT) {Main Vision Class}
     cam = None      # Camera (CAM) {SimpleCV Camera() Object}
 
-    def __init__(self, gui=False, ld=None, cn=None, live=None, src=None, trk=None, sf=None, lf=None):
+    def __init__(self, gui=False, ld=None, cn=None,
+                 live=None, src=None, trk=None, sf=None,
+                 lf=None):
 
-        # If not running from GUI, run cmdInit() which takes arguments from command line
+        # If not running from GUI, run cmdInit()
+        # which takes arguments from command line
         if not gui:
-            self.cmdInit()
+            self.cmd_init()
             return
 
         self.ld = ld
@@ -35,9 +40,9 @@ class SequentialFBFMD():
         self.sf = sf
         self.lf = lf
 
-        self.startProgram()
+        self.start_program()
 
-    def cmdInit(self):
+    def cmd_init(self):
 
         # Parsing inputs
         parser = sys.argv
@@ -52,36 +57,39 @@ class SequentialFBFMD():
         self.sf = parser[6]
         self.lf = True if parser[7] == 'True' else False
 
-        self.startProgram()
+        self.start_program()
 
     # Modifications to sequence of program should be modified in here
     # This is where all of the main ColorDistanceTest functions are called
-    def startProgram(self):
+    def start_program(self):
         # Initialising Program
         self.cdt = ColorDistanceTest.CDT(self.live, self.cn, self.src)
         if load:
-            self.cdt.loadCircle(self.sf)
+            self.cdt.load_circle(self.sf)
         else:
-            self.cdt.setArea()
-            self.cdt.saveCircle(self.sf)
+            self.cdt.set_area()
+            self.cdt.save_circle(self.sf)
 
-        # Set custom values here rather than hardcoding in ColorDistanceTest.py
-        self.cdt.setSegmentation()
-        self.cdt.setBlobMultiplier()
-        self.cdt.setTrackRange()
+        # Set custom values here rather
+        # than hardcoding in ColorDistanceTest.py
+        self.cdt.set_segmentation()
+        self.cdt.set_blob_multiplier()
+        self.cdt.set_track_range()
         # So far, only one smoothing method was implemented, being WMA
         # Otherwise, pass None or nothing at all to not apply smoothing
-        self.cdt.setSmoothingMethod("WMA")
-        # self.cdt.setColor() # If ran without arguments, sets the color to [100, 100, 100] overriding setDistColor()
+        self.cdt.set_smoothing_method("WMA")
+        # self.cdt.setColor() # If ran without arguments,
+        # sets the color to [100, 100, 100] overriding setDistColor()
 
-        self.setDistColor()
+        self.set_dist_color()
 
         self.run()
 
-    def setDistColor(self):
-        getRGB = getRGBModular.getRGBModular(self.ld, self.cdt)
-        getRGB.setColor()
-        # No need to call self.cdt to set color, it is set inside getRGBModular's class
+    def set_dist_color(self):
+        get_colour = GetRGBModular.GetRGBModular(self.ld, self.cdt)
+        get_colour.set_color()
+        # No need to call self.cdt to set color,
+        # it is set inside getRGBModular's class
 
     # Run gets the next frame every time you left click
     # Continuously runs when middle clicked (Toggle)
@@ -89,14 +97,14 @@ class SequentialFBFMD():
     def run(self):
         disp = Display()
 
-        img = self.cdt.nextColorTestFrame(self.ld, self.track)
+        img = self.cdt.next_frame(self.ld, self.track)
 
         continuous = False
 
         while disp.isNotDone():
 
             if continuous:
-                img = self.cdt.nextColorTestFrame(self.ld, self.track)
+                img = self.cdt.next_frame(self.ld, self.track)
 
             if disp.mouseMiddle:
                 print "MMB"
@@ -104,7 +112,7 @@ class SequentialFBFMD():
 
             if disp.mouseLeft:
                 print "LMB"
-                img = self.cdt.nextColorTestFrame(self.ld, self.track)
+                img = self.cdt.next_frame(self.ld, self.track)
 
             if disp.mouseRight:
                 print "MRB"

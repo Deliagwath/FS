@@ -73,7 +73,7 @@ class CDTGUIgtk(gtk.Window):
         info.set_label("Move the sliders to adjust the RGB values")
         self.vbox.add(info)
 
-        self.cdt.setArea()
+        self.cdt.set_area()
 
         # Add the image to the display
         nextImg = self.getNextFrame()
@@ -92,7 +92,7 @@ class CDTGUIgtk(gtk.Window):
         return True
 
     def getNextFrame(self):
-        img = self.cdt.nextColorTestFrame().getNumpy()
+        img = self.cdt.next_frame().getNumpy()
         gtk_img = gtk.gdk.pixbuf_new_from_array(img, gtk.gdk.COLORSPACE_RGB, 8)
         return gtk_img
 
@@ -106,7 +106,7 @@ class CDTGUIgtk(gtk.Window):
         r = int(self.rScale.get_value())
         g = int(self.gScale.get_value())
         b = int(self.bScale.get_value())
-        self.cdt.setColor([r, g, b])
+        self.cdt.set_color([r, g, b])
         print "Color set to: [" + str(r) + ", " + str(g) + ", " + str(b) + "]"
 
 

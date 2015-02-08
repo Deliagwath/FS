@@ -15,22 +15,22 @@ cdt1 = CDT(False, 0, vidname)
 cdt2 = CDT(False, 0, vidname)
 cdt3 = CDT(False, 0, vidname)
 
-cdt1.initCam()
-cdt2.initCam()
-cdt3.initCam()
-cdt1.setArea()
-cdt2.setArea(cdt1.circle)
-cdt3.setArea(cdt1.circle)
-cdt1.setSegmentation(0, 255)
-cdt2.setSegmentation(100, 255)
-cdt3.setSegmentation(200, 255)
-cdt1.setColor([100, 100, 100])
-cdt2.setColor([100, 100, 100])
-cdt3.setColor([100, 100, 100])
+cdt1.init_cam()
+cdt2.init_cam()
+cdt3.init_cam()
+cdt1.set_area()
+cdt2.set_area(cdt1.circle)
+cdt3.set_area(cdt1.circle)
+cdt1.set_segmentation(0, 255)
+cdt2.set_segmentation(100, 255)
+cdt3.set_segmentation(200, 255)
+cdt1.set_color([100, 100, 100])
+cdt2.set_color([100, 100, 100])
+cdt3.set_color([100, 100, 100])
 
-img = cdt1.nextColorTestFrame(True, False)
-img2 = cdt2.nextColorTestFrame(True, False)
-img3 = cdt3.nextColorTestFrame(True, False)
+img = cdt1.next_frame(True, False)
+img2 = cdt2.next_frame(True, False)
+img3 = cdt3.next_frame(True, False)
 
 width, height = img.size()
 allimg = Image((width, height * 3))
@@ -45,9 +45,9 @@ allimg.applyLayers()
 disp = Display()
 while disp.isNotDone():
     if disp.mouseLeft:
-        img = cdt1.nextColorTestFrame(True, False)
-        img2 = cdt2.nextColorTestFrame(True, False)
-        img3 = cdt3.nextColorTestFrame(True, False)
+        img = cdt1.next_frame(True, False)
+        img2 = cdt2.next_frame(True, False)
+        img3 = cdt3.next_frame(True, False)
 
         if img.isEmpty() or img2.isEmpty() or img3.isEmpty():
             print "EOF Break"
@@ -86,9 +86,9 @@ while disp.isNotDone():
         print str(pixel)
         print str(r) + "," + str(g) + "," + str(b)
         boolean = True
-        cdt1.setColor([int(r), int(g), int(b)])
-        cdt2.setColor([int(r), int(g), int(b)])
-        cdt3.setColor([int(r), int(g), int(b)])
+        cdt1.set_color([int(r), int(g), int(b)])
+        cdt2.set_color([int(r), int(g), int(b)])
+        cdt3.set_color([int(r), int(g), int(b)])
 
     if disp.mouseMiddle:
         print "MMB Break"
