@@ -268,6 +268,9 @@ class NaiveTrackingClass:
         if self.checkIncorrectTracking():
             self.__init__(self.smoothingmethod, self.size)
 
+        if blobs is None:
+            return {1: (None, None), 2: (None, None)}
+
         for pos in blobs.coordinates():
 
             if self.fly1past[-1] is None:
