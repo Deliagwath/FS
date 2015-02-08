@@ -446,11 +446,6 @@ class CDT():
             # Refer to said class for more information
             data = self.tracking.track(blobs)
 
-            print "Data"
-            print "Data1:" + str(data[1])
-            print "Data2:" + str(data[2])
-            print "-----"
-
             # Flags to reduce computation if both values were not found
             notfound = {1: False, 2: False}
 
