@@ -1,5 +1,5 @@
 from SimpleCV import *
-from ColorDistanceTest import *
+from VisionModule import *
 import sys
 
 # Fly Eyes ~(100,50,50)
@@ -11,9 +11,9 @@ vidname = parser[1]  # First index is file name
 disp = Display()
 boolean = False
 
-cdt1 = CDT(False, 0, vidname)
-cdt2 = CDT(False, 0, vidname)
-cdt3 = CDT(False, 0, vidname)
+cdt1 = VisionModule(False, 0, vidname)
+cdt2 = VisionModule(False, 0, vidname)
+cdt3 = VisionModule(False, 0, vidname)
 
 cdt1.init_cam()
 cdt2.init_cam()
@@ -24,9 +24,9 @@ cdt3.set_area(cdt1.circle)
 cdt1.set_segmentation(0, 255)
 cdt2.set_segmentation(100, 255)
 cdt3.set_segmentation(200, 255)
-cdt1.set_color([100, 100, 100])
-cdt2.set_color([100, 100, 100])
-cdt3.set_color([100, 100, 100])
+cdt1.set_colour([100, 100, 100])
+cdt2.set_colour([100, 100, 100])
+cdt3.set_colour([100, 100, 100])
 
 img = cdt1.next_frame(True, False)
 img2 = cdt2.next_frame(True, False)
@@ -86,9 +86,9 @@ while disp.isNotDone():
         print str(pixel)
         print str(r) + "," + str(g) + "," + str(b)
         boolean = True
-        cdt1.set_color([int(r), int(g), int(b)])
-        cdt2.set_color([int(r), int(g), int(b)])
-        cdt3.set_color([int(r), int(g), int(b)])
+        cdt1.set_colour([int(r), int(g), int(b)])
+        cdt2.set_colour([int(r), int(g), int(b)])
+        cdt3.set_colour([int(r), int(g), int(b)])
 
     if disp.mouseMiddle:
         print "MMB Break"

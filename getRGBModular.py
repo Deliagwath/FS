@@ -15,14 +15,14 @@ class GetRGBModular():
     cam = None          # SimpleCV Camera() Object
     live = True         # Get from live feed or file
     extended = None     # Return original feed or not
-    cdt = None          # ColorDistanceTest instance
+    vm = None          # ColorDistanceTest instance
 
-    def __init__(self, extended, cdt):
+    def __init__(self, extended, vm):
         self.extended = extended
-        self.cdt = cdt
+        self.vm = vm
 
     def set_color(self):
-        img = self.cdt.next_frame(self.extended, False)
+        img = self.vm.next_frame(self.extended, False)
 
         boolean = False
 
@@ -35,13 +35,13 @@ class GetRGBModular():
             # If tracking is on, it can be detrimental as a line
             # is drawn and may interfere with colour selection
             if disp.mouseLeft:
-                img = self.cdt.next_frame(self.extended, False)
+                img = self.vm.next_frame(self.extended, False)
 
             # Restarts the feed if arrived at end of file
             if img.isEmpty():
                 print "EOF, restarting feed"
-                self.cdt.init_cam()
-                img = self.cdt.next_frame(self.extended, False)
+                self.vm.init_cam()
+                img = self.vm.next_frame(self.extended, False)
 
             # Gets colour from pixel currently at mouse position
             # and set segmentation colour
@@ -53,7 +53,7 @@ class GetRGBModular():
                 print str(pixel)
                 print str(r) + "," + str(g) + "," + str(b)
                 boolean = True
-                self.cdt.set_color([int(r), int(g), int(b)])
+                self.vm.set_colour([int(r), int(g), int(b)])
 
             # Ends the colour selection process and
             # returns to CDT's next function

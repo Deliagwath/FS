@@ -1,9 +1,9 @@
 import Tkinter as tK
 from ttk import *
-import SequentialFBFMD as sF
+import InitProgram as iP
 import os
 
-# GUI Class to help simplify the running of SequentialFBFMD.py
+# GUI Class to help simplify the running of InitProgram.py
 
 
 class InitGUI(Frame):
@@ -54,7 +54,7 @@ class InitGUI(Frame):
         self.style.theme_use("default")
         
         loaded = self.loadlastsession()
-        
+
         self.pack(fill=tK.BOTH, expand=1)
 
         self.tkld = tK.BooleanVar()
@@ -143,10 +143,10 @@ class InitGUI(Frame):
         print "Save File Name: " + str(self.savefile)
         self.lf = self.tklf.get()
         print "Load File? " + str(self.lf)
-        self.main_program = sF.SequentialFBFMD(True, self.ld, self.cn,
-                                               self.live, self.src,
-                                               self.trk, self.savefile,
-                                               self.lf)
+        self.main_program = iP.InitProgram(True, self.ld, self.cn,
+                                           self.live, self.src,
+                                           self.trk, self.savefile,
+                                           self.lf)
 
     # Automatically called when the Quit button is pressed
     def savelastsession(self):

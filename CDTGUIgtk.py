@@ -1,4 +1,4 @@
-from ColorDistanceTest import *
+from VisionModule import *
 import pygtk
 pygtk.require('2.0')
 import gtk
@@ -30,7 +30,7 @@ class CDTGUIgtk(gtk.Window):
 
     def __init__(self):
 
-        self.cdt = CDT(self.videoname)
+        self.cdt = VisionModule(self.videoname)
 
         super(CDTGUIgtk, self).__init__()
         self.set_position(gtk.WIN_POS_CENTER)
@@ -106,7 +106,7 @@ class CDTGUIgtk(gtk.Window):
         r = int(self.rScale.get_value())
         g = int(self.gScale.get_value())
         b = int(self.bScale.get_value())
-        self.cdt.set_color([r, g, b])
+        self.cdt.set_colour([r, g, b])
         print "Color set to: [" + str(r) + ", " + str(g) + ", " + str(b) + "]"
 
 
