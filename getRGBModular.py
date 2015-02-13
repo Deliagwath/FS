@@ -54,12 +54,12 @@ class GetRGBModular():
                 print str(r) + "," + str(g) + "," + str(b)
                 boolean = True
                 self.vm.set_colour([int(r), int(g), int(b)])
+                img = self.vm.next_frame(self.extended, False)
 
             # Ends the colour selection process and
             # returns to CDT's next function
-            if disp.mouseMiddle:
-                print "MMB Break"
-                break
+            # Press ESC
+            # Documentation for usage will be included in program
 
             if boolean:
                 img.drawText("RGB: " + str(r) + "," + str(g) + "," +

@@ -19,7 +19,7 @@ class InitProgram():
     track = False   # Track Objects {Boolean}
     sf = None       # Save File (SF) {String - Save filename}
     lf = None       # Load File (LF) {Boolean}
-    cdt = None      # ColorDistanceTest (CDT) {Main Vision Class}
+    vm = None      # ColorDistanceTest (CDT) {Main Vision Class}
     cam = None      # Camera (CAM) {SimpleCV Camera() Object}
 
     def __init__(self, gui=False, ld=None, cn=None,
@@ -63,21 +63,21 @@ class InitProgram():
     # This is where all of the main ColorDistanceTest functions are called
     def start_program(self):
         # Initialising Program
-        self.cdt = VisionModule.VisionModule(self.live, self.cn, self.src)
+        self.vm = VisionModule.VisionModule(self.live, self.cn, self.src)
         if load:
-            self.cdt.load_circle(self.sf)
+            self.vm.load_circle(self.sf)
         else:
-            self.cdt.set_area()
-            self.cdt.save_circle(self.sf)
+            self.vm.set_area()
+            self.vm.save_circle(self.sf)
 
         # Set custom values here rather
         # than hardcoding in VisionModule.py
-        self.cdt.set_segmentation()
-        self.cdt.set_blob_multiplier()
-        self.cdt.set_track_range()
+        self.vm.set_segmentation()
+        self.vm.set_blob_multiplier()
+        self.vm.set_track_range()
         # So far, only one smoothing method was implemented, being WMA
         # Otherwise, pass None or nothing at all to not apply smoothing
-        self.cdt.set_smoothing_method("WMA")
+        self.vm.set_smoothing_method("WMA")
         # self.cdt.setColor() # If ran without arguments,
         # sets the color to [100, 100, 100] overriding setDistColor()
 
@@ -86,7 +86,7 @@ class InitProgram():
         self.run()
 
     def set_dist_color(self):
-        get_colour = GetRGBModular.GetRGBModular(self.ld, self.cdt)
+        get_colour = GetRGBModular.GetRGBModular(self.ld, self.vm)
         get_colour.set_color()
         # No need to call self.cdt to set color,
         # it is set inside getRGBModular's class
@@ -97,29 +97,21 @@ class InitProgram():
     def run(self):
         disp = Display()
 
-        img = self.cdt.next_frame(self.ld, self.track)
+        img = self.vm.next_frame(self.ld, self.track)
 
         continuous = False
 
         while disp.isNotDone():
 
             if continuous:
-                img = self.cdt.next_frame(self.ld, self.track)
-
-            if disp.mouseWheelUp:
-                print "MMBU"
-                continuous = True
-
-            if disp.mouseWheelDown:
-                print "MMBD"
-                continuous = False
+                img = self.vm.next_frame(self.ld, self.track)
 
             if disp.mouseLeft:
-                print "LMB"
-                img = self.cdt.next_frame(self.ld, self.track)
+                print "Toggled Continuous"
+                continuous = not continuous
 
             if disp.mouseRight:
-                print "MRB"
+                img = self.vm.next_frame(self.ld, self.track)
                 break
 
             if img.isEmpty():
