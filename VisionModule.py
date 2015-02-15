@@ -64,7 +64,7 @@ import os
 # May the crashes be few and programs run happy.
 
 
-class VisionModule():
+class VisionModule:
 
     live = True
     cam = None

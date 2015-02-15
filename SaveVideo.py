@@ -4,6 +4,7 @@ from SimpleCV import *
 # There were problems with SimpleCV's videostream
 # Hence, it has been implemented using cv2 instead
 
+
 class SaveVideo:
 
     vidname = None

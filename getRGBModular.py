@@ -9,7 +9,7 @@ from SimpleCV import *
 # clearly in certain circumstances
 
 
-class GetRGBModular():
+class GetRGBModular:
 
     # Variables for instance
     cam = None          # SimpleCV Camera() Object

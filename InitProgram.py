@@ -10,7 +10,7 @@ import sys
 # and recieve arguments from said instance
 
 
-class InitProgram():
+class InitProgram:
 
     # __init__ variables
     ld = False      # Larger Display (LD) {Boolean}
