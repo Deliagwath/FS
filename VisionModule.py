@@ -542,21 +542,26 @@ class VisionModule:
                     all_blobs.append([x + width * 2, y])
         all_img.drawPoints(all_blobs)
 
-        # If tracking is stagnant, add to counter
-        if data[1][0] is None and data[1][1] is None:
-            self.none_tracker[1] += 1
-        else:
-            self.none_tracker[1] = 0
+        if data is not None:
 
-        if data[2][0] is None and data[2][1] is None:
-            self.none_tracker[2] += 1
-        else:
-            self.none_tracker[2] = 0
+            # If tracking is stagnant, add to counter
+            if data[1][0] is None and data[1][1] is None:
+                self.none_tracker[1] += 1
+            else:
+                self.none_tracker[1] = 0
 
-        # If tracking has been stagnant for more than 20 frames,
-        # reinitialise tracker
-        if self.none_tracker[1] > 20 or self.none_tracker[2] > 20:
-            self.tracking_module = None
-            self.set_smoothing_method(self.smoothing_method, self.history_size)
+            if data[2][0] is None and data[2][1] is None:
+                self.none_tracker[2] += 1
+            else:
+                self.none_tracker[2] = 0
+
+            # If tracking has been stagnant for more than 20 frames,
+            # reinitialise tracker
+            if self.none_tracker[1] > 20 or self.none_tracker[2] > 20:
+                self.tracking_module = None
+                self.set_smoothing_method(self.smoothing_method,
+                                          self.history_size)
+
+
 
         return img, data, all_img
