@@ -8,8 +8,8 @@ import os
 # s1124124@sms.ed.ac.uk
 
 # Program Documentation
-# This class, called "CDT" or
-# ColourDistanceTest at time of writing
+# This class, called "VM" or
+# Vision Module at time of writing
 
 # Is started with 3 variables in __init__()
 # Being "live, camno, video"
@@ -60,6 +60,9 @@ import os
 # or not originalImage is true, which will either include or exclude
 # the unmodified feed
 
+# Good Luck!
+# May the crashes be few and programs run happy.
+
 
 class VisionModule():
 
@@ -89,7 +92,9 @@ class VisionModule():
     trackmin = 1
     trackmax = 30
     tracking_module = None
-    smoothingmethod = None
+    smoothing_method = None
+    history_size = 4
+    none_tracker = {1: 0, 2: 0}
 
     # Spatial Variables
     flyprevpos = {1: None, 2: None}
@@ -320,10 +325,11 @@ class VisionModule():
     # Valid Smoothing Methods
     # WMA (Weighted Moving Average)
     # None (No Smoothing)
-    def set_smoothing_method(self, method=None, historysize=4):
-        self.smoothingmethod = method
+    def set_smoothing_method(self, method=None, history_size=4):
+        self.smoothing_method = method
+        self.history_size = history_size
         if method == "WMA":
-            self.tracking_module = Ntc.TrackingModule("WMA", historysize)
+            self.tracking_module = Ntc.TrackingModule("WMA", history_size)
 
     def save_circle(self, filename):
 
@@ -381,6 +387,11 @@ class VisionModule():
         self.set_area(self.circle)
         print "Loaded Successfully!"
 
+    # Returns three items.
+    # First is the original video feed for recording purposes
+    # Second is the set of analysed data to be used for exporting along
+    # with the recorded video
+    # Lastly, the analysed video itself
     def next_frame(self, original_image, track):
 
         # Check for area initialisation.
@@ -394,6 +405,8 @@ class VisionModule():
         width = img1.width
         height = img1.height
 
+        data = None
+
         # Inclusion of original feed from camera/video
         if original_image:
             all_img = Image((width * 3, height))
@@ -403,8 +416,8 @@ class VisionModule():
         # Catch in case something goes wrong with camera initialisation
         i = self.cam.getImage()
         if i.isEmpty():
-            print "End Of File, reinitialize or choose new file"
-            return None
+            print "End Of File"
+            return None, None, None
 
         # Main vision processing
         im = i.crop(self.circle)
@@ -528,4 +541,22 @@ class VisionModule():
                 if original_image:
                     all_blobs.append([x + width * 2, y])
         all_img.drawPoints(all_blobs)
-        return all_img
+
+        # If tracking is stagnant, add to counter
+        if data[1][0] is None and data[1][1] is None:
+            self.none_tracker[1] += 1
+        else:
+            self.none_tracker[1] = 0
+
+        if data[2][0] is None and data[2][1] is None:
+            self.none_tracker[2] += 1
+        else:
+            self.none_tracker[2] = 0
+
+        # If tracking has been stagnant for more than 20 frames,
+        # reinitialise tracker
+        if self.none_tracker[1] > 20 or self.none_tracker[2] > 20:
+            self.tracking_module = None
+            self.set_smoothing_method(self.smoothing_method, self.history_size)
+
+        return img, data, all_img

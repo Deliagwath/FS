@@ -22,7 +22,7 @@ class GetRGBModular():
         self.vm = vm
 
     def set_color(self):
-        img = self.vm.next_frame(self.extended, False)
+        _, _, img = self.vm.next_frame(self.extended, False)
 
         boolean = False
 
@@ -35,13 +35,13 @@ class GetRGBModular():
             # If tracking is on, it can be detrimental as a line
             # is drawn and may interfere with colour selection
             if disp.mouseLeft:
-                img = self.vm.next_frame(self.extended, False)
+                _, _, img = self.vm.next_frame(self.extended, False)
 
             # Restarts the feed if arrived at end of file
             if img.isEmpty():
                 print "EOF, restarting feed"
                 self.vm.init_cam()
-                img = self.vm.next_frame(self.extended, False)
+                _, _, img = self.vm.next_frame(self.extended, False)
 
             # Gets colour from pixel currently at mouse position
             # and set segmentation colour
@@ -54,7 +54,7 @@ class GetRGBModular():
                 print str(r) + "," + str(g) + "," + str(b)
                 boolean = True
                 self.vm.set_colour([int(r), int(g), int(b)])
-                img = self.vm.next_frame(self.extended, False)
+                _, _, img = self.vm.next_frame(self.extended, False)
 
             # Ends the colour selection process and
             # returns to CDT's next function

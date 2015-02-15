@@ -21,8 +21,10 @@ class InitGUI(Frame):
     savefilelabel = None
     savefilebox = None
     loadfilecheckbox = None
+    recordlabel = None
+    recordbox = None
     runprogrambutton = None
-    quitbutton = None
+    savebutton = None
 
     # Tkinter Variables for information retrieval
     # Respective to their program variables
@@ -38,6 +40,7 @@ class InitGUI(Frame):
     trk = False         # Boolean for Tracking
     savefile = "save"  # Save file for saving Circle
     lf = True           # Boolean to check saving or loading
+    vn = None           # String filename to record to (Video name)
                         # True to load, False to save
 
     def __init__(self, parent):
@@ -116,17 +119,27 @@ class InitGUI(Frame):
             self.loadfilecheckbox.toggle()
         self.loadfilecheckbox.grid(row=5, column=0)
 
+        self.recordlabel = tK.Label(self, text="File to record to")
+        self.recordlabel.grid(row=6, column=0)
+
+        self.recordbox = tK.Entry(self)
+        if loaded and self.vn is not None:
+            self.recordbox.insert(0, self.vn)
+        else:
+            self.recordbox.insert(0, "Filename")
+        self.recordbox.grid(row=6, column=1)
+
         self.runprogrambutton = tK.Button(self,
                                           text="Start",
                                           command=self.run)
-        self.runprogrambutton.grid(row=6, column=0)
+        self.runprogrambutton.grid(row=7, column=0)
 
-        self.quitbutton = tK.Button(self, text="Quit",
-                                    command=self.savelastsession)
-        self.quitbutton.grid(row=6, column=1)
+        self.savebutton = tK.Button(self, text="Save",
+                                    command=self.save_config)
+        self.savebutton.grid(row=7, column=1)
 
     # Parses all the data from the GUI elements
-    # and passes it into SequentialFBFMD which is the main program loop
+    # and passes it into InitProgram which is the main program loop
     def run(self):
         self.ld = self.tkld.get()
         print "Larger Display: " + str(self.ld)
@@ -143,13 +156,15 @@ class InitGUI(Frame):
         print "Save File Name: " + str(self.savefile)
         self.lf = self.tklf.get()
         print "Load File? " + str(self.lf)
+        self.vn = self.recordbox.get()
+        print "Recording File Name: " + str(self.vn)
         self.main_program = iP.InitProgram(True, self.ld, self.cn,
                                            self.live, self.src,
                                            self.trk, self.savefile,
-                                           self.lf)
+                                           self.lf, self.vn)
 
     # Automatically called when the Quit button is pressed
-    def savelastsession(self):
+    def save_config(self):
 
         filename = "lastSession"
 
@@ -166,12 +181,12 @@ class InitGUI(Frame):
         opened_file.write(str(self.sourcebox.get()).strip() + "\n")
         opened_file.write(str(self.tktrk.get()).strip() + "\n")
         opened_file.write(str(self.savefilebox.get()).strip() + "\n")
-        opened_file.write(str(self.tklf.get()).strip())
+        opened_file.write(str(self.tklf.get()).strip() + "\n")
+        opened_file.write(str(self.recordbox.get()).strip())
 
         # Close file
         opened_file.close()
         print "Saved Successfully!"
-        self.quit()
 
     # Returns True if there was lastSession information, False otherwise
     def loadlastsession(self):
@@ -198,6 +213,7 @@ class InitGUI(Frame):
         self.trk = True if data[3].strip() == '1' else False
         self.savefile = data[4].strip()
         self.lf = True if data[5].strip() == '1' else False
+        self.vn = data[6].strip()
 
         print "Loaded Successfully!"
         return True

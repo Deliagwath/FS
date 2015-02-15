@@ -1,6 +1,7 @@
 from SimpleCV import *
 import VisionModule
 import GetRGBModular
+import SaveVideo
 import sys
 
 # Main class program to be run
@@ -19,12 +20,14 @@ class InitProgram():
     track = False   # Track Objects {Boolean}
     sf = None       # Save File (SF) {String - Save filename}
     lf = None       # Load File (LF) {Boolean}
-    vm = None      # ColorDistanceTest (CDT) {Main Vision Class}
+    vm = None       # Vision Module (VM) {Main Vision Class}
+    sv = None       # Recording Class (SV) [Save Video Class]
+    vn = None       # Video Name (VN) [String - Filename to save to]
     cam = None      # Camera (CAM) {SimpleCV Camera() Object}
 
     def __init__(self, gui=False, ld=None, cn=None,
                  live=None, src=None, trk=None, sf=None,
-                 lf=None):
+                 lf=None, vn=None):
 
         # If not running from GUI, run cmdInit()
         # which takes arguments from command line
@@ -39,6 +42,7 @@ class InitProgram():
         self.track = trk
         self.sf = sf
         self.lf = lf
+        self.vn = vn
 
         self.start_program()
 
@@ -56,6 +60,7 @@ class InitProgram():
         self.track = True if parser[5] == 'True' else False
         self.sf = parser[6]
         self.lf = True if parser[7] == 'True' else False
+        self.vn = parser[8]
 
         self.start_program()
 
@@ -97,28 +102,63 @@ class InitProgram():
     def run(self):
         disp = Display()
 
-        img = self.vm.next_frame(self.ld, self.track)
+        original, data, img = self.vm.next_frame(self.ld, self.track)
 
         continuous = False
+        lastimg = None
+        end = False
 
         while disp.isNotDone():
 
             if continuous:
-                img = self.vm.next_frame(self.ld, self.track)
+                original, data, img = self.vm.next_frame(self.ld, self.track)
+                if original is None and data is None and img is None:
+                    end = True
+                    img = lastimg
 
-            if disp.mouseLeft:
+            if end is True:
+                continuous = False
+                if self.sv is not None:
+                    self.sv.end()
+                    self.sv = None
+
+            if self.sv is not None and continuous:
+                self.sv.record(original, data)
+
+            if disp.leftButtonDown:
                 print "Toggled Continuous"
                 continuous = not continuous
 
-            if disp.mouseRight:
-                img = self.vm.next_frame(self.ld, self.track)
-                break
+            if disp.mouseWheelDown:
+                original, data, img = self.vm.next_frame(self.ld, self.track)
+
+            if disp.rightButtonDown:
+                # Record
+                if self.sv is None and end is False:
+                    self.sv = SaveVideo.SaveVideo(self.vn)
+                    print "Recording to " + self.sv.vidname
+                elif end is False:
+                    print "Saving to " + self.sv.vidname
+                    self.sv.end()
+                    print "Ending recording"
+                    self.sv = None
+                else:
+                    print "Cannot record from End of File"
 
             if img.isEmpty():
                 print "EOF"
                 break
 
+            if self.sv is not None:
+                width, height = img.size()
+                ddl = DrawingLayer((width, height))
+                ddl.circle((20, height - 20), 5,
+                           Color.RED, 1, True, -1, False)
+                img.addDrawingLayer(ddl)
+                img.applyLayers()
+
             img.save(disp)
+            lastimg = img
         disp.quit()
 
 if __name__ == '__main__':
