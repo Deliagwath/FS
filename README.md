@@ -18,6 +18,7 @@ https://github.com/Deliagwath/FS
 to the directory you wish to run it from.
 
 The program is very straight forward in running.
+
 Open up the command prompt to the current working directory, and type in
 
 python InitGUI.py
@@ -25,6 +26,7 @@ python InitGUI.py
 And the program should launch.
 
 There are input parameters to take note of:
+
 Camera Number:  Should default to 0, unless there are more than one cameras on the system,
                 in which the number should be incremented by one each time to test out which
                 camera to use.
@@ -62,6 +64,7 @@ loaded the file with the initialised area.
 This will explain how it will work.
 
 The first screen will be the area grab.
+
 This will be the optional screen depending on if the file is loaded or not.
 The aim of this screen is to reduce noise and reduce computation time by selecting the arena itself.
 Left click and drag to create a circle in which will be used for computation. Release to lock it in place.
@@ -70,6 +73,7 @@ being left click and drag.
 Once the area has been selected, either right click, or press ESC to proceed.
 
 The second screen is the colour selector.
+
 This screen will display three images.
 The area you selected directly from the live feed with a mask to ignore the corners of the arena.
 The purpose of this screen is to allow the user to choose the colour by clicking on the leftmost image
@@ -78,6 +82,7 @@ The aim is to choose a colour in which will only display the two flies clearly.
 The colour is initialised to [100, 100, 100] which is grey and is acceptible in the calculations.
 
 The third screen is the main program loop.
+
 This is where the main analysis and display overlay comes in.
 The feed can be moved frame by frame by scrolling downwards using the mouse wheel, or left click to make
 the feed continuous.
@@ -88,6 +93,7 @@ to end the program.
 The left and right click may be required to be held down for the program to respond.
 
 Then the GUI should still remain in place, allowing for more experimentation to be done.
+
 In case the exact same or similar experiemnt is to be run, the save buttom will save the current
 configurations in the GUI, to allow the user not to need to re-write all arguments to the program,
 and will be automatically loaded the next time the program runs.
