@@ -16,7 +16,7 @@ class SaveVideo:
     data_buffer = []
 
     def __init__(self, vidname):
-        print vidname
+        # print vidname
 
         parsed = vidname.split('.')
 
@@ -73,9 +73,9 @@ class SaveVideo:
 
         # Write from buffer every 1 second
         # Since 10 fps on VideoStream
-        if self.frame_number % 100 == 0:
+        if data is not None and self.frame_number % 100 == 0:
             self.write_data(False)
-        else:
+        elif data is not None:
             self.buffer_data(data)
 
         if self.videostream is None:
@@ -88,8 +88,8 @@ class SaveVideo:
 
     def write_data(self, now):
 
-        print "write_data(" + str(now) + ")"
-        print "Buffer = " + str(self.data_buffer)
+        # print "write_data(" + str(now) + ")"
+        # print "Buffer = " + str(self.data_buffer)
 
         # Writes to file
         opened_file = open(self.dataname, 'a')

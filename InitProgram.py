@@ -53,14 +53,14 @@ class InitProgram:
 
         # Parsing inputs to correct data type
 
-        self.ld = True if parser[1] == 'True' else False
-        self.cn = int(parser[2])
-        self.live = True if parser[3] == 'True' else False
-        self.src = parser[4]
-        self.track = True if parser[5] == 'True' else False
-        self.sf = parser[6]
-        self.lf = True if parser[7] == 'True' else False
-        self.vn = parser[8]
+        self.ld = True  # if parser[1] == 'True' else False
+        self.cn = int(parser[1])
+        self.live = True if parser[2] == 'True' else False
+        self.src = parser[3]
+        self.track = True if parser[4] == 'True' else False
+        self.sf = parser[5]
+        self.lf = True if parser[6] == 'True' else False
+        self.vn = parser[7]
 
         self.start_program()
 

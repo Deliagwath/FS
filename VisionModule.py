@@ -562,6 +562,4 @@ class VisionModule:
                 self.set_smoothing_method(self.smoothing_method,
                                           self.history_size)
 
-
-
         return img, data, all_img

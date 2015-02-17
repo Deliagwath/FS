@@ -60,35 +60,35 @@ class InitGUI(Frame):
 
         self.pack(fill=tK.BOTH, expand=1)
 
-        self.tkld = tK.BooleanVar()
-        self.ldcheckbox = tK.Checkbutton(self,
-                                         text="Include Original Image",
-                                         variable=self.tkld,
-                                         onvalue=True,
-                                         offvalue=False)
-        if loaded and self.ld is True:
-            self.ldcheckbox.toggle()
-        self.ldcheckbox.grid(row=0, column=0)
+        # self.tkld = tK.BooleanVar()
+        # self.ldcheckbox = tK.Checkbutton(self,
+        #                                  text="Include Original Image",
+        #                                  variable=self.tkld,
+        #                                  onvalue=True,
+        #                                  offvalue=False)
+        # if loaded and self.ld is True:
+        #     self.ldcheckbox.toggle()
+        # self.ldcheckbox.grid(row=0, column=0)
 
         self.camlabel = tK.Label(self, text="Camera Number")
-        self.camlabel.grid(row=1, column=0)
+        self.camlabel.grid(row=0, column=0)
 
         self.cambox = tK.Entry(self)
         if loaded:
             self.cambox.insert(0, self.cn)
         else:
             self.cambox.insert(0, "0")
-        self.cambox.grid(row=1, column=1)
+        self.cambox.grid(row=0, column=1)
 
         self.sourcelabel = tK.Label(self, text="File Name")
-        self.sourcelabel.grid(row=2, column=0)
+        self.sourcelabel.grid(row=1, column=0)
 
         self.sourcebox = tK.Entry(self)
         if loaded:
             self.sourcebox.insert(0, self.src)
         else:
             self.sourcebox.insert(0, "Leave empty if Live")
-        self.sourcebox.grid(row=2, column=1)
+        self.sourcebox.grid(row=1, column=1)
 
         self.tktrk = tK.BooleanVar()
         self.trackcheckbox = tK.Checkbutton(self, text="Include Tracking",
@@ -96,18 +96,18 @@ class InitGUI(Frame):
                                             offvalue=False)
         if loaded and self.trk is True:
             self.trackcheckbox.toggle()
-        self.trackcheckbox.grid(row=3, column=0)
+        self.trackcheckbox.grid(row=2, column=0)
 
         self.savefilelabel = tK.Label(self,
                                       text="File name for saving/loading")
-        self.savefilelabel.grid(row=4, column=0)
+        self.savefilelabel.grid(row=3, column=0)
 
         self.savefilebox = tK.Entry(self)
         if loaded:
             self.savefilebox.insert(0, self.savefile)
         else:
             self.savefilebox.insert(0, "save")
-        self.savefilebox.grid(row=4, column=1)
+        self.savefilebox.grid(row=3, column=1)
 
         self.tklf = tK.BooleanVar()
         self.loadfilecheckbox = tK.Checkbutton(self,
@@ -117,31 +117,31 @@ class InitGUI(Frame):
                                                offvalue=False)
         if loaded and self.lf is True:
             self.loadfilecheckbox.toggle()
-        self.loadfilecheckbox.grid(row=5, column=0)
+        self.loadfilecheckbox.grid(row=4, column=0)
 
         self.recordlabel = tK.Label(self, text="File to record to")
-        self.recordlabel.grid(row=6, column=0)
+        self.recordlabel.grid(row=5, column=0)
 
         self.recordbox = tK.Entry(self)
         if loaded and self.vn is not None:
             self.recordbox.insert(0, self.vn)
         else:
             self.recordbox.insert(0, "Filename")
-        self.recordbox.grid(row=6, column=1)
+        self.recordbox.grid(row=5, column=1)
 
         self.runprogrambutton = tK.Button(self,
                                           text="Start",
                                           command=self.run)
-        self.runprogrambutton.grid(row=7, column=0)
+        self.runprogrambutton.grid(row=6, column=0)
 
         self.savebutton = tK.Button(self, text="Save",
                                     command=self.save_config)
-        self.savebutton.grid(row=7, column=1)
+        self.savebutton.grid(row=6, column=1)
 
     # Parses all the data from the GUI elements
     # and passes it into InitProgram which is the main program loop
     def run(self):
-        self.ld = self.tkld.get()
+        self.ld = True  # self.tkld.get()
         print "Larger Display: " + str(self.ld)
         self.cn = int(self.cambox.get())
         print "Camera Number: " + str(self.cn)
