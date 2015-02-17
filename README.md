@@ -55,3 +55,40 @@ File to record: This is the filename in which the program will attempt to record
                 of one to not overwrite any existing data.
                 If tracking is enabled, the orientation information will also be exported in a file
                 of the same name, but with a .txt extension.
+
+Inside the program itself, you will be prompted with three or two screens depending whether or not you
+loaded the file with the initialised area.
+
+This will explain how it will work.
+
+The first screen will be the area grab.
+This will be the optional screen depending on if the file is loaded or not.
+The aim of this screen is to reduce noise and reduce computation time by selecting the arena itself.
+Left click and drag to create a circle in which will be used for computation. Release to lock it in place.
+If the first circle is not satisfcatory, you can retry as many times as you want with the same method,
+being left click and drag.
+Once the area has been selected, either right click, or press ESC to proceed.
+
+The second screen is the colour selector.
+This screen will display three images.
+The area you selected directly from the live feed with a mask to ignore the corners of the arena.
+The purpose of this screen is to allow the user to choose the colour by clicking on the leftmost image
+where they think will affect the other two images to the right the most.
+The aim is to choose a colour in which will only display the two flies clearly.
+The colour is initialised to [100, 100, 100] which is grey and is acceptible in the calculations.
+
+The third screen is the main program loop.
+This is where the main analysis and display overlay comes in.
+The feed can be moved frame by frame by scrolling downwards using the mouse wheel, or left click to make
+the feed continuous.
+The feed can also be recorded as the leftmost image without annotation by right clicking until a red circle
+appears at the bottom left hand corner.
+Once done, you should right click again to turn the recording off, and you can proceed by pressing ESC
+to end the program.
+The left and right click may be required to be held down for the program to respond.
+
+Then the GUI should still remain in place, allowing for more experimentation to be done.
+In case the exact same or similar experiemnt is to be run, the save buttom will save the current
+configurations in the GUI, to allow the user not to need to re-write all arguments to the program,
+and will be automatically loaded the next time the program runs.
+The program will then be stopped if the user presses the red X at the top right hand corner.
