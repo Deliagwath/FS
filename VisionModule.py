@@ -61,7 +61,7 @@ import os
 # the unmodified feed
 
 # Good Luck!
-# May the crashes be few and programs run happy.
+# May the crashes be few and programs run smoothly.
 
 
 class VisionModule:
@@ -126,7 +126,7 @@ class VisionModule:
             self.max_blob_size = cropped_dimensions * self.max_blob_multiplier
             self.min_blob_size = cropped_dimensions * self.min_blob_multiplier
             self.init_cam()
-            return
+            return True
 
         elif circle is None and mask is not None:
             x, y = mask.size()
@@ -139,7 +139,7 @@ class VisionModule:
             self.max_blob_size = cropped_dimensions * self.max_blob_multiplier
             self.min_blob_size = cropped_dimensions * self.min_blob_multiplier
             self.init_cam()
-            return
+            return True
 
         elif circle is not None and mask is None:
             self.circle = circle
@@ -161,7 +161,7 @@ class VisionModule:
             self.mask = self.mask.applyLayers()
             self.mask = self.mask.invert()
             self.init_cam()
-            return
+            return True
 
         # Code for manual input of area
         disp = Display()
@@ -224,7 +224,9 @@ class VisionModule:
 
         # If a circle was not selected before leaving the loop
         if not selected:
-            cropped_dimensions = img.size()[0] * img.size()[1]
+            disp.quit()
+            print "You must pick a circle"
+            return False
 
         # Calculating min and max blob size according
         # to the new size of computation window
@@ -235,6 +237,12 @@ class VisionModule:
         self.min_blob_size = cropped_dimensions * self.min_blob_multiplier
 
         cropped_image = Image(img.size()).crop(self.circle)
+
+        if cropped_image is None:
+            disp.quit()
+            print "Your circle must be smaller than the original" + \
+                   " image."
+            return False
 
         # Creation of mask for main program loop
         self.mask = Image(cropped_image.size())
@@ -247,6 +255,7 @@ class VisionModule:
         self.mask = self.mask.applyLayers()
         self.mask = self.mask.invert()
         disp.quit()
+        return True
 
     def set_colour(self, rgb=None):
 
@@ -340,7 +349,9 @@ class VisionModule:
         # If circle or mask does not yet exist,
         # send user to manually input circle
         if self.circle is None:
-            self.set_area()
+            returned = False
+            while not returned:
+                returned = self.set_area()
 
         # Creates and writes to new file
         opened_file = open(filename, 'w')
@@ -384,7 +395,9 @@ class VisionModule:
         self.circle = Circle(0, int(x), int(y), float(r))
 
         # Initialising Mask
-        self.set_area(self.circle)
+        returned = False
+        while not returned:
+            returned = self.set_area(self.circle)
         print "Loaded Successfully!"
 
     # Returns three items.
@@ -398,7 +411,9 @@ class VisionModule:
         # setArea() is required before this function can run.
         if self.circle is None or self.mask is None:
             print "Area was not initialised, setting area manually."
-            self.set_area()
+            returned = False
+            while not returned:
+                returned = self.set_area()
 
         img1 = self.cam.getImage().crop(self.circle)
 

@@ -69,7 +69,7 @@ class InitProgram:
     def start_program(self):
         # Initialising Program
         self.vm = VisionModule.VisionModule(self.live, self.cn, self.src)
-        if load:
+        if self.lf:
             self.vm.load_circle(self.sf)
         else:
             self.vm.set_area()

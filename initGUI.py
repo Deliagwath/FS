@@ -150,11 +150,11 @@ class InitGUI(Frame):
         print "Video Feed: " + disp
         self.live = True if self.src == "" else False
         print "Live: " + str(self.live)
-        self.trk = self.tktrk.get()
+        self.trk = True if self.tktrk.get() else False
         print "Tracking: " + str(self.trk)
         self.savefile = self.savefilebox.get()
         print "Save File Name: " + str(self.savefile)
-        self.lf = self.tklf.get()
+        self.lf = True if self.tklf.get() else False
         print "Load File? " + str(self.lf)
         self.vn = self.recordbox.get()
         print "Recording File Name: " + str(self.vn)
@@ -176,7 +176,6 @@ class InitGUI(Frame):
         opened_file = open(filename, 'w')
 
         # Writing arguments to file
-        opened_file.write(str(self.tkld.get()).strip() + "\n")
         opened_file.write(str(self.cambox.get()).strip() + "\n")
         opened_file.write(str(self.sourcebox.get()).strip() + "\n")
         opened_file.write(str(self.tktrk.get()).strip() + "\n")
@@ -199,21 +198,30 @@ class InitGUI(Frame):
             return False
 
         # Else, read from file
-        opened_file = open(filename, 'r')
-
         try:
+            opened_file = open(filename, 'r')
             data = opened_file.readlines()
         except IOError:
-            print "File not Found"
+            print "IO Failed"
             return False
 
-        self.ld = True if data[0].strip() == '1' else False
-        self.cn = int(data[1].strip())
-        self.src = data[2].strip()
-        self.trk = True if data[3].strip() == '1' else False
-        self.savefile = data[4].strip()
-        self.lf = True if data[5].strip() == '1' else False
-        self.vn = data[6].strip()
+        print "Parsing Previous Session Data"
+
+        try:
+            self.cn = int(data[0].strip())
+            print "Parsed Camera Number"
+            self.src = data[1].strip()
+            print "Parsed Source"
+            self.trk = True if data[2].strip() == '1' else False
+            print "Parsed Tracking"
+            self.savefile = data[3].strip()
+            print "Parsed Loading"
+            self.lf = True if data[4].strip() == '1' else False
+            print "Parsed Output Name"
+            self.vn = data[5].strip()
+        except:
+            print "Parsing Failed"
+            return False
 
         print "Loaded Successfully!"
         return True
