@@ -279,9 +279,6 @@ class TrackingModule:
 
         first = True
 
-        orientation1 = None
-        orientation2 = None
-
         # For the case in which both the trackers
         # are tracking the same object, reinitialise the class
         if self.check_incorrect_tracking():
