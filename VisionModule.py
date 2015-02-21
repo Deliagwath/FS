@@ -108,7 +108,7 @@ class VisionModule:
 
     def init_cam(self):
         if self.live:
-            self.cam = Camera(self.camno, {"width": 1280, "height": 720})
+            self.cam = Camera(self.camno)  # , {"width": 1280, "height": 720})
         else:
             self.cam = VirtualCamera(self.vid, "video")
 
@@ -180,6 +180,7 @@ class VisionModule:
             if img.isEmpty():
                 self.init_cam()
                 img = self.cam.getImage()
+                continue
 
             # End area selection
             if disp.mouseRight:
@@ -398,6 +399,8 @@ class VisionModule:
         returned = False
         while not returned:
             returned = self.set_area(self.circle)
+
+        opened_file.close()
         print "Loaded Successfully!"
 
     # Returns three items.
@@ -415,7 +418,13 @@ class VisionModule:
             while not returned:
                 returned = self.set_area()
 
-        img1 = self.cam.getImage().crop(self.circle)
+        img = self.cam.getImage()
+        print str(img)
+        if img.isEmpty():
+            self.init_cam()
+            img = self.cam.getImage()
+
+        img1 = img.crop(self.circle)
 
         width = img1.width
         height = img1.height
@@ -428,17 +437,9 @@ class VisionModule:
         else:
             all_img = Image((width * 2, height))
 
-        # Catch in case something goes wrong with camera initialisation
-        i = self.cam.getImage()
-        if i.isEmpty():
-            print "End Of File"
-            return None, None, None
-
         # Main vision processing
-        im = i.crop(self.circle)
-
         # Application of mask to reduce computation area
-        img = (im - self.mask) + self.mask
+        img = (img1 - self.mask) + self.mask
 
         # Finding the color distance from masked image
         dist = img.colorDistance(self.color).invert()

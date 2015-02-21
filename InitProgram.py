@@ -110,6 +110,10 @@ class InitProgram:
 
         while disp.isNotDone():
 
+            if img is None:
+                original, data, img = self.vm.next_frame(self.ld, self.track)
+                continue
+
             if continuous:
                 original, data, img = self.vm.next_frame(self.ld, self.track)
                 if original is None and data is None and img is None:
@@ -156,6 +160,9 @@ class InitProgram:
                            Color.RED, 1, True, -1, False)
                 img.addDrawingLayer(ddl)
                 img.applyLayers()
+
+            if img is None:
+                continue
 
             img.save(disp)
             lastimg = img

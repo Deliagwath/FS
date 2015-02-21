@@ -29,6 +29,10 @@ class GetRGBModular:
         disp = Display()
         while disp.isNotDone():
 
+            if img is None:
+                _, _, img = self.vm.next_frame(self.extended, False)
+                continue
+
             # Advances one frame via left click
             # Second argument set to false,
             # tracking not necessary to select colour
@@ -64,6 +68,7 @@ class GetRGBModular:
             if boolean:
                 img.drawText("RGB: " + str(r) + "," + str(g) + "," +
                              str(b), x+20, y+20, [int(r), int(g), int(b)], 16)
+
             img.save(disp)
         disp.quit()
 
