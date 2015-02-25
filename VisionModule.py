@@ -69,6 +69,7 @@ class VisionModule:
     live = True
     cam = None
     camno = None
+    online = False
     vid = None
 
     # Variables for reducing computation area
@@ -107,10 +108,15 @@ class VisionModule:
         self.init_cam()
 
     def init_cam(self):
-        if self.live:
-            self.cam = Camera(self.camno, {"width": 1280, "height": 720})
-        else:
+        # Online variable to prevent reinitialisation of camera
+        # Reinitialisation of live feed will crash the camera
+        if self.live and not self.online:
+            self.cam = Camera(self.camno)  # , {"width": 1280, "height": 720})
+            self.online = True
+        elif not self.live:
             self.cam = VirtualCamera(self.vid, "video")
+        else:
+            print "Camera already initialised"
 
     def set_area(self, circle=None, mask=None):
 
@@ -125,7 +131,6 @@ class VisionModule:
             cropped_dimensions = x * y
             self.max_blob_size = cropped_dimensions * self.max_blob_multiplier
             self.min_blob_size = cropped_dimensions * self.min_blob_multiplier
-            self.init_cam()
             return True
 
         elif circle is None and mask is not None:
@@ -138,7 +143,6 @@ class VisionModule:
             cropped_dimensions = x * y
             self.max_blob_size = cropped_dimensions * self.max_blob_multiplier
             self.min_blob_size = cropped_dimensions * self.min_blob_multiplier
-            self.init_cam()
             return True
 
         elif circle is not None and mask is None:
@@ -160,7 +164,6 @@ class VisionModule:
             self.mask.addDrawingLayer(dl)
             self.mask = self.mask.applyLayers()
             self.mask = self.mask.invert()
-            self.init_cam()
             return True
 
         # Code for manual input of area
