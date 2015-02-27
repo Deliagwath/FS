@@ -1,4 +1,5 @@
 from SimpleCV import *
+import numpy as np
 import TrackingModule as Ntc
 import os
 
@@ -495,10 +496,11 @@ class VisionModule:
                         continue
 
                     elif prevpos2 is not None and boolean:
-                        prevori = prevpos2 - prevpos1
-                        ddl.line(pos, pos + prevori,
+                        prevori = tuple(np.subtract(prevpos2, prevpos1))
+                        ddl.line(pos, tuple(np.add(pos, prevori)),
                                  Color.ORANGE, 1, False, -1)
-                        self.flyprevori[key] = (pos, pos + prevori)
+                        self.flyprevori[key] = (pos,
+                                                tuple(np.add(pos, prevori)))
                         notfound[key] = True
 
                     else:

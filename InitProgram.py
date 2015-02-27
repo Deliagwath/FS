@@ -136,12 +136,16 @@ class InitProgram:
                 # Record
                 if self.sv is None and end is False:
                     self.sv = SaveVideo.SaveVideo(self.vn)
+                    with open('PostProcessing', 'a+') as pp:
+                        pp.write(self.vn + '\n')
+                        pp.close()
                     print "Recording to " + self.sv.vidname
                 elif end is False:
                     print "Saving to " + self.sv.vidname
                     self.sv.end()
                     print "Ending recording"
                     self.sv = None
+
                 else:
                     print "Cannot record from End of File"
 

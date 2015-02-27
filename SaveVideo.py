@@ -16,7 +16,6 @@ class SaveVideo:
     data_buffer = []
 
     def __init__(self, vidname):
-        # print vidname
 
         parsed = vidname.split('.')
 
