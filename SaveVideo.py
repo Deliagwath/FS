@@ -73,6 +73,7 @@ class SaveVideo:
         # Write from buffer every 1 second
         # Since 10 fps on VideoStream
         if data is not None and self.frame_number % 100 == 0:
+            self.buffer_data(data)
             self.write_data(False)
         elif data is not None:
             self.buffer_data(data)
@@ -82,8 +83,28 @@ class SaveVideo:
         self.videostream.write(frame.getNumpyCv2())
         self.frame_number += 1
 
+    # Parses data into comma separated variable format
     def buffer_data(self, data):
-        self.data_buffer.append({self.frame_number: data})
+
+        strdata = str(self.frame_number)
+
+        for fly, flydata in data.iteritems():
+            origin, destination = flydata
+            if origin is None:
+                strdata += ',' + str(None)
+            else:
+                x1, y1 = origin
+                strdata += ',' + str(x1)
+                strdata += ',' + str(y1)
+
+            if destination is None:
+                strdata += ',' + str(None)
+            else:
+                x2, y2 = destination
+                strdata += ',' + str(x2)
+                strdata += ',' + str(y2)
+
+        self.data_buffer.append(strdata)
 
     def write_data(self, now):
 
