@@ -89,12 +89,12 @@ class TrackingModule:
         for pos in blobs.coordinates():
 
             if self.fly1past[-1] is None:
-                returndict[1] = (pos, None)
+                returndict[1] = ((pos[0], pos[1]), None)
                 init1 = True
                 continue
 
             if self.fly2past[-1] is None:
-                returndict[2] = (pos, None)
+                returndict[2] = ((pos[0], pos[1]), None)
                 init2 = True
                 continue
 
@@ -110,10 +110,10 @@ class TrackingModule:
                 boolean2 = self.within_min(2, pos)
 
             if not init1 and boolean1:
-                returndict[1] = (pos, boolean1)
+                returndict[1] = ((pos[0], pos[1]), boolean1)
 
             elif not init2 and boolean2:
-                returndict[2] = (pos, boolean2)
+                returndict[2] = ((pos[0], pos[1]), boolean2)
 
         if 1 not in returndict:
             returndict[1] = (None, None)
@@ -185,10 +185,10 @@ class TrackingModule:
     def replace_position(self, pos1=None, pos2=None):
 
         if pos1 is not None:
-            self.fly1past[-1] = pos1
+            self.fly1past[-1] = (pos1[0], pos1[1])
 
         if pos2 is not None:
-            self.fly2past[-1] = pos2
+            self.fly2past[-1] = (pos2[0], pos2[1])
 
     def add_orientation(self, ori1=None, ori2=None):
 
@@ -293,14 +293,14 @@ class TrackingModule:
         for pos in blobs.coordinates():
 
             if self.fly1past[-1] is None:
-                self.add_position(pos1=pos)
-                returndict[1] = (pos, None)
+                self.add_position(pos1=(pos[0], pos[1]))
+                returndict[1] = ((pos[0], pos[1]), None)
                 init1 = True
                 continue
 
             if self.fly2past[-1] is None:
-                self.add_position(pos2=pos)
-                returndict[2] = (pos, None)
+                self.add_position(pos2=(pos[0], pos[1]))
+                returndict[2] = ((pos[0], pos[1]), None)
                 init2 = True
                 continue
 
@@ -327,49 +327,57 @@ class TrackingModule:
                 ori1, ori2 = self.calculate_orientation()
 
                 if not init1 and magnitude1 and 1 not in returndict:
-                    returndict[1] = (pos, (pos[0] + ori1[0], pos[1] + ori1[1]))
+                    returndict[1] = ((pos[0], pos[1]),
+                                     (pos[0] + ori1[0], pos[1] + ori1[1]))
                     mag1 = magnitude1
-                    self.add_position(pos1=pos)
+                    self.add_position(pos1=(pos[0], pos[1]))
 
                 elif not init1 and magnitude1 and \
                         1 in returndict and magnitude1 < mag1:
-                    returndict[1] = (pos, (pos[0] + ori1[0], pos[1] + ori1[1]))
+                    returndict[1] = ((pos[0], pos[1]),
+                                     (pos[0] + ori1[0], pos[1] + ori1[1]))
                     mag1 = magnitude1
-                    self.replace_position(pos1=pos)
+                    self.replace_position(pos1=(pos[0], pos[1]))
 
                 elif not init2 and magnitude2 and 2 not in returndict:
-                    returndict[2] = (pos, (pos[0] + ori2[0], pos[1] + ori2[1]))
+                    returndict[2] = ((pos[0], pos[1]),
+                                     (pos[0] + ori2[0], pos[1] + ori2[1]))
                     mag2 = magnitude2
-                    self.add_position(pos2=pos)
+                    self.add_position(pos2=(pos[0], pos[1]))
 
                 elif not init2 and magnitude2 and \
                         2 in returndict and magnitude2 < mag2:
-                    returndict[2] = (pos, (pos[0] + ori2[0], pos[1] + ori2[1]))
+                    returndict[2] = ((pos[0], pos[1]),
+                                     (pos[0] + ori2[0], pos[1] + ori2[1]))
                     mag2 = magnitude2
-                    self.replace_position(pos2=pos)
+                    self.replace_position(pos2=(pos[0], pos[1]))
 
             else:
                 if not init1 and magnitude1 and 1 not in returndict:
-                    returndict[1] = (pos, (pos[0] + orientation1[0],
-                                           pos[1] + orientation1[1]))
+                    returndict[1] = ((pos[0], pos[1]),
+                                     (pos[0] + orientation1[0],
+                                      pos[1] + orientation1[1]))
                     mag1 = magnitude1
 
                 elif not init1 and magnitude1 and \
                         1 in returndict and magnitude1 < mag1:
-                    returndict[1] = (pos, (pos[0] + orientation1[0],
-                                           pos[1] + orientation1[1]))
+                    returndict[1] = ((pos[0], pos[1]),
+                                     (pos[0] + orientation1[0],
+                                      pos[1] + orientation1[1]))
                     mag1 = magnitude1
 
                 elif not init2 and magnitude2 and \
                         2 not in returndict:
-                    returndict[2] = (pos, (pos[0] + orientation2[0],
-                                           pos[1] + orientation2[1]))
+                    returndict[2] = ((pos[0], pos[1]),
+                                     (pos[0] + orientation2[0],
+                                      pos[1] + orientation2[1]))
                     mag2 = magnitude2
 
                 elif not init2 and magnitude2 and \
                         2 in returndict and magnitude2 < mag2:
-                    returndict[2] = (pos, (pos[0] + orientation2[0],
-                                           pos[1] + orientation2[1]))
+                    returndict[2] = ((pos[0], pos[1]),
+                                     (pos[0] + orientation2[0],
+                                      pos[1] + orientation2[1]))
                     mag2 = magnitude2
 
         if 1 not in returndict:
