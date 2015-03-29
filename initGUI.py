@@ -25,12 +25,15 @@ class InitGUI(Frame):
     recordbox = None
     runprogrambutton = None
     savebutton = None
+    testlabel = None
+    testcheckbox = None
 
     # Tkinter Variables for information retrieval
     # Respective to their program variables
     tkld = None
     tktrk = None
     tklf = None
+    tktr = None
 
     # Program Variables
     ld = None           # Include original image (Larger Display ld)
@@ -42,6 +45,7 @@ class InitGUI(Frame):
     lf = True           # Boolean to check saving or loading
     vn = None           # String filename to record to (Video name)
                         # True to load, False to save
+    tr = False          # Testing, True to run in testing mode
 
     def __init__(self, parent):
 
@@ -129,14 +133,25 @@ class InitGUI(Frame):
             self.recordbox.insert(0, "Filename")
         self.recordbox.grid(row=5, column=1)
 
+        self.testlabel = tK.Label(self, text="Testing")
+        self.testlabel.grid(row=6, column=0)
+
+        self.tktr = tK.BooleanVar()
+        self.testcheckbox = tK.Checkbutton(self,
+                                           text="Testing",
+                                           variable=self.tktr,
+                                           onvalue=True,
+                                           offvalue=False)
+        self.testcheckbox.grid(row=6, column=1)
+
         self.runprogrambutton = tK.Button(self,
                                           text="Start",
                                           command=self.run)
-        self.runprogrambutton.grid(row=6, column=0)
+        self.runprogrambutton.grid(row=7, column=0)
 
         self.savebutton = tK.Button(self, text="Save",
                                     command=self.save_config)
-        self.savebutton.grid(row=6, column=1)
+        self.savebutton.grid(row=7, column=1)
 
     # Parses all the data from the GUI elements
     # and passes it into InitProgram which is the main program loop
@@ -158,10 +173,12 @@ class InitGUI(Frame):
         print "Load File? " + str(self.lf)
         self.vn = self.recordbox.get()
         print "Recording File Name: " + str(self.vn)
+        self.tr = True if self.tktr.get() else False
+        print "Testing Mode: " + str(self.tr)
         self.main_program = iP.InitProgram(True, self.ld, self.cn,
                                            self.live, self.src,
                                            self.trk, self.savefile,
-                                           self.lf, self.vn)
+                                           self.lf, self.vn, self.tr)
 
     # Automatically called when the Quit button is pressed
     def save_config(self):

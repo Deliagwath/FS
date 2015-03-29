@@ -16,7 +16,7 @@ import os
 # Being "live, camno, video"
 
 # live is a boolean denoting whether or not
-# the program is to take in a live feed or not
+# the program is to take in a live feed
 
 # If live is true, it draws camno to get the camera number
 # to be used to grab the live feed from
@@ -478,6 +478,7 @@ class VisionModule:
             # TrackingModule.py for processing
             # Refer to said class for more information
             data = self.tracking_module.track(blobs)
+            tempdata = {1: None, 2: None}
 
             # Flags to reduce computation if both values were not found
             notfound = {1: False, 2: False}
@@ -497,11 +498,12 @@ class VisionModule:
 
                     elif prevpos2 is not None and boolean:
                         prevori = tuple(np.subtract(prevpos2, prevpos1))
-                        ddl.line(pos, tuple(np.add(pos, prevori)),
+                        vec = tuple(np.add(pos, prevori))
+                        ddl.line(pos, vec,
                                  Color.ORANGE, 1, False, -1)
-                        self.flyprevori[key] = (pos,
-                                                tuple(np.add(pos, prevori)))
+                        self.flyprevori[key] = (pos, vec)
                         notfound[key] = True
+                        tempdata[key] = (pos, vec)
 
                     else:
                         continue
@@ -582,4 +584,14 @@ class VisionModule:
                 self.set_smoothing_method(self.smoothing_method,
                                           self.history_size)
 
+        if track:
+            if tempdata[1] is not None and tempdata[2] is not None:
+                data = tempdata
+            else:
+                if tempdata[1] is not None:
+                    data[1] = tempdata[1]
+                if tempdata[2] is not None:
+                    data[2] = tempdata[2]
+
+        print str(data)
         return img, data, all_img
