@@ -11,6 +11,10 @@ And SimpleCV
 
 http://simplecv.org/download
 
+Note! OpenCV has problems with recording video files and must be fixed manually by moving the opencv_ffmpeg file from the OpenCV directory to the main Python directory.
+
+http://stackoverflow.com/questions/17328450/opencv-videowriter-with-python-gives-5-54kb-file
+
 Then download the entire repository from github
 
 https://github.com/Deliagwath/FS
